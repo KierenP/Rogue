@@ -1,6 +1,7 @@
 #pragma once
 #include "MathLib.h"
 #include "SFML\Graphics.hpp"
+#include "Perlin.h"
 #include <iostream>
 #include <vector>
 
@@ -34,6 +35,8 @@ public:
 	void SetTexture(sf::Texture texture) { mTileSet = texture; }
 	void SetTiles(std::vector<std::vector<Tile> >& pTiles) { mTiles = pTiles; }
 
+	//SpriteIndex will range from 0 to amp, seed is deterministic
+	void GenerateFromPerlin(int octaves, float freq, float amp, float persistance, int seed = 0);
 	void LoadFromFile(std::string pFileLocation);
 	void Render(sf::RenderWindow* pTarget);
 	bool CheckSolid(float px, float py) const;														//Check if the tile under a given location (in pixles) is solid or not

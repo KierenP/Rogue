@@ -56,6 +56,20 @@ TileEngine::TileEngine(Vector2 pTileSize, sf::Texture pTileSet, std::vector<std:
 }
 
 
+void TileEngine::GenerateFromPerlin(int octaves, float freq, float amp, float persistance, int seed)
+{
+	Perlin* Noise = new Perlin(octaves, freq, amp / 2, persistance, seed);		//Perlin generates noise from -amp to +amp, to get just 0 to +amp I generate if from -amp/2 to +amp/2 and then add amp/2
+
+	for (int i = 0; i < mTiles.size(); i++)
+	{
+		for (int j = 0; j < mTiles[i].size(); j++)
+		{
+			float Value = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size());
+			mTiles[i][j].mSpriteIndex = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size()) + (amp / 2);
+		}
+	}
+}
+
 void TileEngine::LoadFromFile(std::string pFileLocation)
 {
 	//Load from File
@@ -71,8 +85,10 @@ void TileEngine::Render(sf::RenderWindow* pTarget)
 	{
 		for (unsigned int j = 0; j < mTiles[i].size(); j++)
 		{
+			unsigned int TilesPerRow = static_cast<int>(mTileSet.getSize().x / mTileSize.x);
+
 			Temp.setPosition(j * mTileSize.x, i * mTileSize.y);
-			Temp.setTextureRect(sf::IntRect(mTiles[i][j].mSpriteIndex % static_cast<int>(mTileSet.getSize().x / mTileSize.x), static_cast<int>(mTiles[i][j].mSpriteIndex / (static_cast<int>(mTileSet.getSize().x / mTileSize.x))), mTileSize.x, mTileSize.y));
+			Temp.setTextureRect(sf::IntRect((mTiles[i][j].mSpriteIndex % TilesPerRow) * mTileSize.x, static_cast<int>(mTiles[i][j].mSpriteIndex / TilesPerRow) * mTileSize.y, mTileSize.x, mTileSize.y));
 			pTarget->draw(Temp);
 		}
 	}

@@ -7,7 +7,7 @@
 class Perlin
 {
 public:
-	Perlin(int octaves, float freq, float amp, int seed);
+	Perlin(int octaves, float freq, float amp, float persistance, int seed);
 
 	float Get(float x, float y)
 	{
@@ -31,6 +31,7 @@ private:
 	float mFrequency;
 	float mAmplitude;
 	int   mSeed;
+	float mPersistance;
 
 	int p[SAMPLE_SIZE + SAMPLE_SIZE + 2];
 	float g3[SAMPLE_SIZE + SAMPLE_SIZE + 2][3];

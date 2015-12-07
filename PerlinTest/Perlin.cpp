@@ -217,9 +217,9 @@ float Perlin::perlin_noise_2D(float vec[2])
 	for (int i = 0; i<terms; i++)
 	{
 		result += noise2(vec)*amp;
-		vec[0] *= 2.0f;
-		vec[1] *= 2.0f;
-		amp *= 0.5f;
+		vec[0] *= 1 / mPersistance;
+		vec[1] *= 1 / mPersistance;
+		amp *= mPersistance;
 	}
 
 
@@ -228,11 +228,12 @@ float Perlin::perlin_noise_2D(float vec[2])
 
 
 
-Perlin::Perlin(int octaves, float freq, float amp, int seed)
+Perlin::Perlin(int octaves, float freq, float amp, float persistance, int seed)
 {
 	mOctaves = octaves;
 	mFrequency = freq;
 	mAmplitude = amp;
 	mSeed = seed;
+	mPersistance = persistance;
 	mStart = true;
 }
