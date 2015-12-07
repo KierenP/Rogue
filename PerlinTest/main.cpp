@@ -6,7 +6,7 @@ using namespace::MathLib;
 
 int main()
 {
-	Vector3 A(2, 3, 4);
+	Vector3 A(3, 3, 4);
 	Vector3 B(5, 6, 7);
 	Vector3 C = CrossProduct(A, B);
 
