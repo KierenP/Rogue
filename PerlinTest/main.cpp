@@ -1,15 +1,21 @@
 #include "MathLib.h"
+#include "TileEngine.h"
 #include <iostream>
 #include <string>
 #include <SFML\Graphics.hpp>
 
 using namespace::MathLib;
 
+TileEngine MyEngine(Vector2(10, 10));
+
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
+
+	MyEngine.SetTileSize(Vector2(64, 64));
+	sf::Texture MyTexture;
+	MyTexture.loadFromFile("TestTileSet.png");
+	MyEngine.SetTexture(MyTexture);
 
 	while (window.isOpen())
 	{
@@ -21,7 +27,7 @@ int main()
 		}
 
 		window.clear();
-		window.draw(shape);
+		MyEngine.Render(&window);
 		window.display();
 	}
 

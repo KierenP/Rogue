@@ -44,7 +44,7 @@ namespace MathLib
 
 	float Vector3::Magnitude()
 	{
-		return sqrt(x*x + y*y + z*z);
+		return static_cast<float>(sqrt(x*x + y*y + z*z));
 	}
 
 	Vector3 operator+(const Vector3 & lhs, const Vector3 & rhs)

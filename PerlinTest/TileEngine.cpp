@@ -72,7 +72,7 @@ void TileEngine::Render(sf::RenderWindow* pTarget)
 		for (unsigned int j = 0; j < mTiles[i].size(); j++)
 		{
 			Temp.setPosition(j * mTileSize.x, i * mTileSize.y);
-			Temp.setTextureRect(sf::IntRect(j * mTileSize.x, i * mTileSize.y, mTileSize.x, mTileSize.y));
+			Temp.setTextureRect(sf::IntRect(mTiles[i][j].mSpriteIndex % static_cast<int>(mTileSet.getSize().x / mTileSize.x), static_cast<int>(mTiles[i][j].mSpriteIndex / (static_cast<int>(mTileSet.getSize().x / mTileSize.x))), mTileSize.x, mTileSize.y));
 			pTarget->draw(Temp);
 		}
 	}
