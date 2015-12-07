@@ -83,7 +83,7 @@ bool TileEngine::CheckSolid(float px, float py) const
 {
 	if (px < 0 || py < 0 || py > mTiles.size() * mTileSize.y || px > mTiles.at(static_cast<int>(py / mTileSize.y)).size() * mTileSize.x)  //If out of the world, colision = true
 	{
-		std::cout << "Out of bounds point given to 'TileEngine::CheckSolid'\n";
+		std::cout << "Warning: Out of bounds point given to 'TileEngine::CheckSolid'\n";
 		return true;
 	}
 
