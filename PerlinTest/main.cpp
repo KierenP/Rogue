@@ -8,9 +8,9 @@
 using namespace::MathLib;
 
 const unsigned int Octives = 8;
-const float Frequency = 4;
+const float Frequency = 10;
 const float Persistance = 0.5;
-const int Seed = 3;
+const int Seed = 74;
 
 const Vector2 TileSize(32, 32);
 const Vector2 WorldSize(500, 500);
