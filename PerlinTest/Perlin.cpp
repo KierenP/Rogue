@@ -217,8 +217,8 @@ float Perlin::perlin_noise_2D(float vec[2])
 	for (int i = 0; i<terms; i++)
 	{
 		result += noise2(vec)*amp;
-		vec[0] *= 1 / mPersistance;
-		vec[1] *= 1 / mPersistance;
+		vec[0] *= 2.0f;
+		vec[1] *= 2.0f;
 		amp *= mPersistance;
 	}
 
