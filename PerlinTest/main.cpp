@@ -9,9 +9,8 @@ using namespace::MathLib;
 
 const unsigned int Octives = 8;
 const float Frequency = 4;
-const float Magnitude = 6;
-const float Persistance = 0.4;
-const int Seed = rand() % 100;
+const float Persistance = 0.5;
+const int Seed = 3;
 
 const Vector2 TileSize(32, 32);
 const Vector2 WorldSize(500, 500);
@@ -32,10 +31,10 @@ int main()
 
 	MyEngine.SetTileSize(TileSize);
 	sf::Texture MyTexture;
-	MyTexture.loadFromFile("TileSet32.png");
+	MyTexture.loadFromFile("TileSet.png");
 	MyEngine.SetTexture(MyTexture);
 
-	MyEngine.GenerateFromPerlin(Octives, Frequency, Magnitude, Persistance, Seed);
+	MyEngine.GenerateFromPerlin(Octives, Frequency, Persistance, Seed);
 
 	while (window.isOpen())
 	{

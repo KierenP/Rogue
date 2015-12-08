@@ -56,16 +56,30 @@ TileEngine::TileEngine(Vector2 pTileSize, sf::Texture pTileSet, std::vector<std:
 }
 
 
-void TileEngine::GenerateFromPerlin(int octaves, float freq, float amp, float persistance, int seed)
+void TileEngine::GenerateFromPerlin(int octaves, float freq, float persistance, int seed)
 {
-	Perlin* Noise = new Perlin(octaves, freq, amp / 2, persistance, seed);		//Perlin generates noise from -amp to +amp, to get just 0 to +amp I generate if from -amp/2 to +amp/2 and then add amp/2
+	Perlin* Noise = new Perlin(octaves, freq, 0.5, persistance, seed);		
+
+	srand(seed);
 
 	for (int i = 0; i < mTiles.size(); i++)
 	{
 		for (int j = 0; j < mTiles[i].size(); j++)
 		{
-			float Value = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size());
-			mTiles[i][j].mSpriteIndex = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size()) + (amp / 2);
+			float PerlinHeight = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size()) + 0.5;						//random between -0.5 and 0.5, because I add 0.5 its now random between 0 and 1
+			float NormilisedDistance = sqrt((mTiles.size() / 2 - i)	* (mTiles.size() / 2 - i)	 + (mTiles[i].size() / 2 - j)	* (mTiles[i].size() / 2 - j))	//current distance from center
+									 / sqrt((mTiles.size() / 2)		* (mTiles.size() / 2)		 + (mTiles[i].size() / 2)		* (mTiles[i].size() / 2));		//max distnce from center
+
+			PerlinHeight -= NormilisedDistance * NormilisedDistance * NormilisedDistance * (NormilisedDistance * (NormilisedDistance * 6 - 15) + 10);											//hight modifier h(d) = 6d^5 - 15d^4 + 10t^3 (standard ease curve)
+
+			if (PerlinHeight < 0)
+				PerlinHeight = 0;
+			if (PerlinHeight > 1)
+				PerlinHeight = 1;
+
+			mTiles[i][j].mPerlinHeight = PerlinHeight;
+			mTiles[i][j].mSpriteIndex = PerlinHeight * 11;
+			
 		}
 	}
 }

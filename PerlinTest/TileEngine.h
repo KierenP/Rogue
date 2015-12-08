@@ -9,10 +9,11 @@ using namespace::MathLib;
 
 struct Tile
 {
-	Tile(unsigned int SpriteIndex = 0, bool IsSolid = false) { mSpriteIndex = SpriteIndex; mIsSolid = IsSolid; }
+	//Tile(unsigned int SpriteIndex = 0, bool IsSolid = false) { mSpriteIndex = SpriteIndex; mIsSolid = IsSolid; }
 
-	unsigned int mSpriteIndex;
-	bool mIsSolid;
+	unsigned int mSpriteIndex;			//The index of the position in the tileset of the spite
+	float mPerlinHeight;				//A value assigned by the perlin algorithm. ranges from 0 to 1.  
+	bool mIsSolid;								
 };
 
 class TileEngine
@@ -36,7 +37,7 @@ public:
 	void SetTiles(std::vector<std::vector<Tile> >& pTiles) { mTiles = pTiles; }
 
 	//SpriteIndex will range from 0 to amp, seed is deterministic
-	void GenerateFromPerlin(int octaves, float freq, float amp, float persistance, int seed = 0);
+	void GenerateFromPerlin(int octaves, float freq, float persistance, int seed = 0);
 	void LoadFromFile(std::string pFileLocation);
 	void Render(sf::RenderWindow* pTarget);
 	bool CheckSolid(float px, float py) const;														//Check if the tile under a given location (in pixles) is solid or not
