@@ -62,24 +62,57 @@ void TileEngine::GenerateFromPerlin(int octaves, float freq, float persistance, 
 
 	srand(seed);
 
-	for (int i = 0; i < mTiles.size(); i++)
-	{
-		for (int j = 0; j < mTiles[i].size(); j++)
-		{
-			float PerlinHeight = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size()) + 0.5;						//random between -0.5 and 0.5, because I add 0.5 its now random between 0 and 1
-			float NormilisedDistance = sqrt((mTiles.size() / 2 - i)	* (mTiles.size() / 2 - i)	 + (mTiles[i].size() / 2 - j)	* (mTiles[i].size() / 2 - j))	//current distance from center
-									 / sqrt((mTiles.size() / 2)		* (mTiles.size() / 2)		 + (mTiles[i].size() / 2)		* (mTiles[i].size() / 2));		//max distnce from center
+	std::vector<Vector2> HillTops;
 
-			PerlinHeight -= NormilisedDistance * NormilisedDistance * NormilisedDistance * (NormilisedDistance * (NormilisedDistance * 6 - 15) + 10);											//hight modifier h(d) = 6d^5 - 15d^4 + 10t^3 (standard ease curve)
+	for (int i = 0; i < 3; i++)	//TODO: replace 3 with passed value, 'HillCount' maybe?
+	{
+		float DistanceFromCenter = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);		//random number between 0 and and 1
+		DistanceFromCenter = pow(DistanceFromCenter, 2) / 2;											//square it, this is now the distance the island will be from the center of the map (halved because from the middle, you only can go 1/2 the screen to the edge)
+		float Direction = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (2 * M_PI));	//Random direction, from 0 to 2pi radians
+
+		HillTops.push_back(Vector2(cos(Direction) * DistanceFromCenter + 0.5, sin(Direction) * DistanceFromCenter + 0.5));
+
+		//float Intercept1 = 1 - sqrt(2 * log(BellCurveHight / sqrt(2 * M_PI)));
+		//float Intercept2 = 1 + sqrt(2 * log(BellCurveHight / sqrt(2 * M_PI)));
+
+		//float HillDistanceX = Intercept1 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (Intercept2 - Intercept1)));	//Hill distance is the distance the hill will be from the center of the map. 0 is the left, 1 is the right
+		//float HillDistanceY = Intercept1 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (Intercept2 - Intercept1)));	//It will be a random number between Intercept1 and 2
+
+		//HillTops.push_back(Vector2(HillDistanceX, HillDistanceY));	//Hill tops will now be a xy cord from 0 to 1, with bell curve distribution 
+
+		std::cout << "X = " << HillTops[i].x << " Y = " << HillTops[i].y << "\n";
+	}
+
+	for (unsigned int i = 0; i < mTiles.size(); i++)
+	{
+		for (unsigned int j = 0; j < mTiles[i].size(); j++)
+		{
+			float PerlinHeight = Noise->Get(static_cast<float>(i) / mTiles.size(), static_cast<float>(j) / mTiles[i].size()) + 0.5f;								//random between -0.5 and 0.5, because I add 0.5 its now random between 0 and 1
+			float HillHeightBias = 1;
+
+			for (unsigned int k = 0; k < HillTops.size(); k++)
+			{			
+				float NormilisedDistance = sqrt((HillTops[k].x - (float(j) / mTiles[i].size())) * (HillTops[k].x - (float(j) / mTiles[i].size())) + (HillTops[k].y - (float(i) / mTiles.size())) * (HillTops[k].y - (float(i) / mTiles.size()))) / float(sqrt(2)) * 3;
+
+				NormilisedDistance = NormilisedDistance * NormilisedDistance * NormilisedDistance * (NormilisedDistance * (NormilisedDistance * 6 - 15) + 10) -0.2;	//hight modifier h(d) = 6d ^ 5 - 15d ^ 4 + 10t ^ 3 (standard ease curve)
+
+				if (HillHeightBias > NormilisedDistance)
+					HillHeightBias = NormilisedDistance;
+			}
+
+			//HillHeightBias /= HillTops.size();	//Get average, by dividing sum be quantity
+			if (HillTops.size() > 0)
+			{
+				PerlinHeight -= HillHeightBias;
+			}
 
 			if (PerlinHeight < 0)
 				PerlinHeight = 0;
-			if (PerlinHeight > 1)
+			if (PerlinHeight > 1)	//shouldnt be a issue, but just in case
 				PerlinHeight = 1;
 
 			mTiles[i][j].mPerlinHeight = PerlinHeight;
-			mTiles[i][j].mSpriteIndex = PerlinHeight * 11;
-			
+			mTiles[i][j].mSpriteIndex = static_cast <unsigned int> (PerlinHeight * 10);		
 		}
 	}
 }
@@ -102,8 +135,14 @@ void TileEngine::Render(sf::RenderWindow* pTarget)
 			unsigned int TilesPerRow = static_cast<int>(mTileSet.getSize().x / mTileSize.x);
 
 			Temp.setPosition(j * mTileSize.x, i * mTileSize.y);
-			Temp.setTextureRect(sf::IntRect((mTiles[i][j].mSpriteIndex % TilesPerRow) * mTileSize.x, static_cast<int>(mTiles[i][j].mSpriteIndex / TilesPerRow) * mTileSize.y, mTileSize.x, mTileSize.y));
+			Temp.setTextureRect(sf::IntRect((mTiles[i][j].mSpriteIndex % TilesPerRow) * (int)mTileSize.x, static_cast<int>(mTiles[i][j].mSpriteIndex / TilesPerRow) * (int)mTileSize.y, (int)mTileSize.x, (int)mTileSize.y));
 			pTarget->draw(Temp);
+
+			//sf::RectangleShape MyShape;
+			//MyShape.setPosition(j * mTileSize.x, i * mTileSize.y);
+			//MyShape.setSize(sf::Vector2f(32, 32));
+			//MyShape.setFillColor(sf::Color(mTiles[i][j].mPerlinHeight * 255, mTiles[i][j].mPerlinHeight * 255, mTiles[i][j].mPerlinHeight * 255, 255));
+			//pTarget->draw(MyShape);
 		}
 	}
 }

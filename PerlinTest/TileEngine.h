@@ -1,9 +1,13 @@
 #pragma once
 #include "MathLib.h"
 #include "SFML\Graphics.hpp"
+#define _USE_MATH_DEFINES
+
 #include "Perlin.h"
 #include <iostream>
 #include <vector>
+#include <math.h>
+
 
 using namespace::MathLib;
 
