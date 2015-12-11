@@ -9,14 +9,14 @@
 
 using namespace::MathLib;
 
-const unsigned int Octives = 4;
-const float Frequency = 4;
-const float Persistance = 1 / sqrt(2);
-const int Seed = time(NULL);
+const unsigned int Octives = 8;
+const float Frequency = 16;
+const float Persistance = 0.5;//1 / sqrt(2);
+const int Seed = static_cast <const int> (time(NULL));
 const Vector2 TileSize(32, 32);
-const Vector2 WorldSize(250, 250);
+const Vector2 WorldSize(1000, 1000);
 
-float MinimapScale = 4;
+float MinimapScale = 1;
 
 TileEngine MyEngine(WorldSize);
 
@@ -36,6 +36,8 @@ int main()
 
 	srand(Seed);
 
+	
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -43,9 +45,16 @@ int main()
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+			if (event.type == sf::Event::MouseWheelScrolled)
+			{//todo fix bug
+				MinimapScale *= 1 + (static_cast <float> (-event.mouseWheelScroll.delta) / 5);		//for each notch down, -20%, for each notch up, +20%
+				Minimap.zoom(1 + (static_cast <float> (-event.mouseWheelScroll.delta) / 5));		
+			}
 		}
 
 		MyEngine.GenerateFromPerlin(Octives, Frequency, Persistance, rand());
+
+		window.setView(Minimap);
 
 		window.clear();
 		MyEngine.Render(&window);

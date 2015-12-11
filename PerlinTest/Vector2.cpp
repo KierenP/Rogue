@@ -38,7 +38,7 @@ namespace MathLib
 
 	float Vector2::Magnitude()
 	{
-		return sqrt(x*x + y*y);
+		return static_cast <float> (sqrt(x*x + y*y));
 	}
 
 	Vector2 operator+(const Vector2 & lhs, const Vector2 & rhs)

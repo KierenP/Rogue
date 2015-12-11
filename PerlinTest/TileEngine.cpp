@@ -70,15 +70,7 @@ void TileEngine::GenerateFromPerlin(int octaves, float freq, float persistance, 
 		DistanceFromCenter = pow(DistanceFromCenter, 2) / 2;											//square it, this is now the distance the island will be from the center of the map (halved because from the middle, you only can go 1/2 the screen to the edge)
 		float Direction = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (2 * M_PI));	//Random direction, from 0 to 2pi radians
 
-		HillTops.push_back(Vector2(cos(Direction) * DistanceFromCenter + 0.5, sin(Direction) * DistanceFromCenter + 0.5));
-
-		//float Intercept1 = 1 - sqrt(2 * log(BellCurveHight / sqrt(2 * M_PI)));
-		//float Intercept2 = 1 + sqrt(2 * log(BellCurveHight / sqrt(2 * M_PI)));
-
-		//float HillDistanceX = Intercept1 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (Intercept2 - Intercept1)));	//Hill distance is the distance the hill will be from the center of the map. 0 is the left, 1 is the right
-		//float HillDistanceY = Intercept1 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (Intercept2 - Intercept1)));	//It will be a random number between Intercept1 and 2
-
-		//HillTops.push_back(Vector2(HillDistanceX, HillDistanceY));	//Hill tops will now be a xy cord from 0 to 1, with bell curve distribution 
+		HillTops.push_back(Vector2(cos(Direction) * DistanceFromCenter + 0.5f, sin(Direction) * DistanceFromCenter + 0.5f));
 
 		std::cout << "X = " << HillTops[i].x << " Y = " << HillTops[i].y << "\n";
 	}
@@ -94,7 +86,7 @@ void TileEngine::GenerateFromPerlin(int octaves, float freq, float persistance, 
 			{			
 				float NormilisedDistance = sqrt((HillTops[k].x - (float(j) / mTiles[i].size())) * (HillTops[k].x - (float(j) / mTiles[i].size())) + (HillTops[k].y - (float(i) / mTiles.size())) * (HillTops[k].y - (float(i) / mTiles.size()))) / float(sqrt(2)) * 3;
 
-				NormilisedDistance = NormilisedDistance * NormilisedDistance * NormilisedDistance * (NormilisedDistance * (NormilisedDistance * 6 - 15) + 10) -0.2;	//hight modifier h(d) = 6d ^ 5 - 15d ^ 4 + 10t ^ 3 (standard ease curve)
+				NormilisedDistance = NormilisedDistance * NormilisedDistance * NormilisedDistance * (NormilisedDistance * (NormilisedDistance * 6 - 15) + 10) - 0.2f;	//hight modifier h(d) = 6d ^ 5 - 15d ^ 4 + 10t ^ 3 (standard ease curve)
 
 				if (HillHeightBias > NormilisedDistance)
 					HillHeightBias = NormilisedDistance;
